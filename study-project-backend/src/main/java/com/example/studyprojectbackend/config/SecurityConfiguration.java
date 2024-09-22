@@ -20,7 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 
 @Configuration
@@ -30,30 +36,40 @@ public class SecurityConfiguration {
     @Resource
     AuthorizeService authorizeService;
 
+    @Resource
+    DataSource dataSource;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,PersistentTokenRepository tokenRepository) throws Exception {
         return http
-                // 配置请求的授权
+                // Configure request authorization
                 .authorizeHttpRequests(auth -> auth
-                        // 所有请求都需要认证后才能访问
+                        // All requests need authentication
                         .anyRequest().authenticated()
                 )
-                // 配置表单登录
+                // Configure form login
                 .formLogin(form -> form
                         .loginProcessingUrl("/api/auth/login")
                         .successHandler(customSuccessHandle())
                         .failureHandler(customFailureHandle())
                 )
-                // 配置登出操作
+                // Configure logout
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler(customLogoutSuccessHandle())
                 )
-                // 配置用户信息
+                // Set user details service
                 .userDetailsService(authorizeService)
-                // 禁用 CSRF 保护
+                .rememberMe(rememberMe -> rememberMe
+                        .rememberMeParameter("remember")
+                        .tokenRepository(tokenRepository)
+                        .tokenValiditySeconds(3600 * 24 * 7)
+
+                )
+                // Disable CSRF protection and configure CORS
                 .csrf(csrf -> csrf.disable())
-                // 配置自定义的未授权处理
+                .cors(cors -> cors.configurationSource(configurationSource()))
+                // Configure custom unauthorized handling
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setCharacterEncoding("utf-8");
@@ -69,55 +85,53 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    // 配置认证管理器
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity security) throws Exception {
-        return security
-                .getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(authorizeService)
-                .and()
-                .build();
+    public PersistentTokenRepository tokenRepository(){
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        jdbcTokenRepository.setCreateTableOnStartup(false);
+        return jdbcTokenRepository;
     }
 
-    // 配置密码加密
+    private CorsConfigurationSource configurationSource() {
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.addAllowedOriginPattern("*"); // Use addAllowedOriginPattern for wildcard origins
+        cors.setAllowCredentials(true);
+        cors.addAllowedHeader("*");
+        cors.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cors);
+        return source;
+    }
+
+    // Configure password encoding
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     private AuthenticationFailureHandler customFailureHandle() {
-        return new AuthenticationFailureHandler() {
-            @Override
-            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                response.setCharacterEncoding("utf-8");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write(JSONObject.toJSONString(RestBean.failure(401, exception.getMessage())));
-            }
+        return (request, response, exception) -> {
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write(JSONObject.toJSONString(RestBean.failure(401, exception.getMessage())));
         };
     }
 
-    public AuthenticationSuccessHandler customSuccessHandle() {
-        return new AuthenticationSuccessHandler() {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                response.setCharacterEncoding("utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write(JSONObject.toJSONString(RestBean.success("登录成功")));
-            }
+    private AuthenticationSuccessHandler customSuccessHandle() {
+        return (request, response, authentication) -> {
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write(JSONObject.toJSONString(RestBean.success("登录成功")));
         };
     }
 
-    public LogoutSuccessHandler customLogoutSuccessHandle() {
-        return new LogoutSuccessHandler() {
-            @Override
-            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                response.setCharacterEncoding("utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write(JSONObject.toJSONString(RestBean.success("登出成功")));
-            }
+    private LogoutSuccessHandler customLogoutSuccessHandle() {
+        return (request, response, authentication) -> {
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write(JSONObject.toJSONString(RestBean.success("登出成功")));
         };
     }
 
 }
-
-
