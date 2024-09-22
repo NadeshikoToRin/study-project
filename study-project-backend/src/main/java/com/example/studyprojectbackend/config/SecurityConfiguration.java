@@ -26,7 +26,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 // 配置请求的授权
-                .authorizeHttpRequests(authz -> authz
+                .authorizeHttpRequests(auth -> auth
                         // 所有请求都需要认证后才能访问
                         .anyRequest().authenticated()
                 )
