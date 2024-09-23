@@ -36,6 +36,9 @@ const login = () => {
     <div style="margin-top: 150px">
       <div style="font-size: 25px;font-weight: bold">登录</div>
       <div style="font-size: 14px;color: gray">请输入用户名和密码</div>
+<!--      <el-divider>-->
+<!--        <span style="font-size: 14px;color: gray">请输入用户名和密码</span>-->
+<!--      </el-divider>-->
     </div>
 
     <!--        //表单-->
@@ -69,7 +72,7 @@ const login = () => {
       <span style="color: gray;font-size: 11px;">没有账号？</span>
     </el-divider>
     <div>
-      <el-button style="width: 270px" type="warning" plain>注册账号</el-button>
+      <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册账号</el-button>
     </div>
   </div>
 </template>

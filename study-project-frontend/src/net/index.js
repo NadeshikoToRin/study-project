@@ -1,6 +1,7 @@
 import axios from "axios";
-// 提示框
 import { ElMessage } from "element-plus";
+
+
 // 默认错误提示函数
 const defaultError = ()=>{
     ElMessage.error("发生了一些错误，请联系管理员")
