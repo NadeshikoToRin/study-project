@@ -12,26 +12,44 @@ const form = reactive({
   code: ''
 })
 
-const validatePass = (rule, value, callback) => {
+const validateUsername = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('求输入用户名'));
-  } else if (value !== form.password) {
-    callback(new Error('两次输入密码不一致!'));
+  } else if (  !/^[a-zA-Z\u4e00-\u9fa5]+$/.test(value)) {
+    callback(new Error('用户名不得包含特殊字符，3-16位'));
   } else {
     callback();
   }
 };
-
+const validatePassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请再次输入密码'));
+  } else if (value !== form.password) {
+    callback(new Error('两次输入密码不一致'));
+  } else {
+    callback();
+  }
+}
 const rules = {
   username: [
-    {required: true, message: '请输入用户名', trigger: 'blur'},
-    {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
+    {validator: validateUsername, trigger: ['blur','change']},
+    {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur']}
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
-    {min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur'}
+    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: 'blur'}
   ],
-  password_repeat: []
+  password_repeat: [
+      {validator : validatePassword, trigger: 'blur'}
+  ],
+  email: [
+    {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']}
+  ],
+  code: [
+    {required: true, message: '请输入验证码', trigger: 'blur'},
+    {min: 6, max: 6, message: '验证码为6位',trigger: 'blur'}
+  ]
 }
 
 </script>
