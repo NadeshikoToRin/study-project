@@ -40,6 +40,8 @@ public class SecurityConfiguration {
         return http
                 // 配置请求授权
                 .authorizeHttpRequests(auth -> auth
+                        // 配置白名单，允许所有验证相关请求
+                        .requestMatchers("/api/auth/**").permitAll()
                         // 所有请求都需要认证
                         .anyRequest().authenticated()
                 )
