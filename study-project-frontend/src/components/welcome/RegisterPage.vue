@@ -1,8 +1,9 @@
 <script setup>
 
-import {Lock, User,Message,Connection,Unlock} from "@element-plus/icons-vue";
+import {Lock, User, Message, Connection, Unlock} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
-import {reactive,ref} from "vue";
+import {reactive, ref} from "vue";
+import {ElMessage} from "element-plus";
 
 const form = reactive({
   username: '',
@@ -15,7 +16,7 @@ const form = reactive({
 const validateUsername = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('求输入用户名'));
-  } else if (  !/^[a-zA-Z\u4e00-\u9fa5]+$/.test(value)) {
+  } else if (!/^[a-zA-Z\u4e00-\u9fa5]+$/.test(value)) {
     callback(new Error('用户名不得包含特殊字符，3-16位'));
   } else {
     callback();
@@ -33,17 +34,34 @@ const validatePassword = (rule, value, callback) => {
 
 const isEmailValid = ref(false);
 
-const onValidate = (prop,isValid) =>{
-  if (prop === 'email'){
+const formRef = ref()
+
+
+const onValidate = (prop, isValid) => {
+  if (prop === 'email') {
     isEmailValid.value = isValid;
   }
 }
+
+const register = () => {
+  formRef.value.validate((isValid) =>{
+    //如果全部填写正确
+    if (isValid){
+
+    }else {
+      ElMessage.warning('请检查输入信息')
+    }
+  })
+}
+
+
+
 
 
 
 const rules = {
   username: [
-    {validator: validateUsername, trigger: ['blur','change']},
+    {validator: validateUsername, trigger: ['blur', 'change']},
     {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur']}
   ],
   password: [
@@ -51,11 +69,15 @@ const rules = {
     {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: 'blur'}
   ],
   password_repeat: [
-      {validator : validatePassword, trigger: 'blur'}
+    {validator: validatePassword, trigger: 'blur'}
   ],
   email: [
     {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur','change']}
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
+  ],
+  code: [
+    {required: true, message: '请输入验证码', trigger: 'blur'},
+    // {min: 6, max: 6, message: '长度为6个字符', trigger: 'blur'}
   ]
 }
 
@@ -71,10 +93,9 @@ const rules = {
     </div>
 
 
-
     <!--        //表单-->
     <div style="margin-top: 50px">
-      <el-form :model="form" :rules="rules" @validate="onValidate">
+      <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
         <el-form-item prop="username">
           <el-input v-model="form.username" type="text" placeholder="用户名/邮箱">
             <template #prefix>
@@ -88,7 +109,9 @@ const rules = {
         <el-form-item prop="password">
           <el-input v-model="form.password" type="password" placeholder="密码">
             <template #prefix>
-              <el-icon><Lock/></el-icon>
+              <el-icon>
+                <Lock/>
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
@@ -96,7 +119,9 @@ const rules = {
         <el-form-item prop="password_repeat">
           <el-input v-model="form.password_repeat" type="password" placeholder="确认密码">
             <template #prefix>
-              <el-icon><Unlock/></el-icon>
+              <el-icon>
+                <Unlock/>
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
@@ -104,17 +129,21 @@ const rules = {
         <el-form-item prop="email">
           <el-input v-model="form.email" type="email" placeholder="电子邮箱">
             <template #prefix>
-              <el-icon><Message /></el-icon>
+              <el-icon>
+                <Message/>
+              </el-icon>
             </template>
 
           </el-input>
         </el-form-item>
         <el-form-item prop="code">
-          <el-row :gutter="3" style="width: 100%" >
+          <el-row :gutter="3" style="width: 100%">
             <el-col :span="18">
               <el-input v-model="form.code" type="text" placeholder="邮箱验证码">
                 <template #prefix>
-                  <el-icon><Connection /></el-icon>
+                  <el-icon>
+                    <Connection/>
+                  </el-icon>
                 </template>
               </el-input>
             </el-col>
@@ -128,13 +157,12 @@ const rules = {
     </div>
 
 
-
     <div>
       <div style="margin-top: 40px">
-        <el-button style="width: 270px" type="warning" plain>立即注册</el-button>
+        <el-button style="width: 270px" @click="register" type="warning" plain>立即注册</el-button>
       </div>
 
-      <el-divider >
+      <el-divider>
         <span style="color: gray;font-size: 11px;">已有账号？</span>
       </el-divider>
       <div>
