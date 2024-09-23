@@ -2,7 +2,7 @@
 
 import {Lock, User,Message,Connection,Unlock} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
-import {reactive} from "vue";
+import {reactive,ref} from "vue";
 
 const form = reactive({
   username: '',
@@ -30,6 +30,17 @@ const validatePassword = (rule, value, callback) => {
     callback();
   }
 }
+
+const isEmailValid = ref(false);
+
+const onValidate = (prop,isValid) =>{
+  if (prop === 'email'){
+    isEmailValid.value = isValid;
+  }
+}
+
+
+
 const rules = {
   username: [
     {validator: validateUsername, trigger: ['blur','change']},
@@ -44,11 +55,7 @@ const rules = {
   ],
   email: [
     {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']}
-  ],
-  code: [
-    {required: true, message: '请输入验证码', trigger: 'blur'},
-    {min: 6, max: 6, message: '验证码为6位',trigger: 'blur'}
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur','change']}
   ]
 }
 
@@ -67,7 +74,7 @@ const rules = {
 
     <!--        //表单-->
     <div style="margin-top: 50px">
-      <el-form :model="form" :rules="rules">
+      <el-form :model="form" :rules="rules" @validate="onValidate">
         <el-form-item prop="username">
           <el-input v-model="form.username" type="text" placeholder="用户名/邮箱">
             <template #prefix>
@@ -112,7 +119,7 @@ const rules = {
               </el-input>
             </el-col>
             <el-col :span="6">
-              <el-button type="success" style="width: 100%;">获取验证码</el-button>
+              <el-button :disabled=" ! isEmailValid" type="success" style="width: 100%;">获取验证码</el-button>
             </el-col>
           </el-row>
         </el-form-item>
