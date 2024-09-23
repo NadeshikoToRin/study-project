@@ -13,10 +13,10 @@ const logout = ()=>{
 </script>
 
 <template>
-<div>
+<div style="text-align: center;margin-top: 50px">
   欢迎进入到学习平台
   <div>
-    <el-button @click="logout" type="danger" plain>退出登录</el-button>
+    <el-button @click="logout" type="danger" plain style="margin-top: 30px">退出登录</el-button>
   </div>
 </div>
 </template>
