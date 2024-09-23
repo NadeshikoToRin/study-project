@@ -23,7 +23,7 @@ public class AuthorizeController {
 
     // 校验邮箱
     @RequestMapping("/valid-email")
-    public RestBean<String> invalidEmail(@Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email){
+    public RestBean<String> validateEmail(@Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email){
         if (authorizeService.sendValidateEmail(email))
             return RestBean.success("邮件已发送，请注意查收");
         else

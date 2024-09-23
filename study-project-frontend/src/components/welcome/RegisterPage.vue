@@ -4,6 +4,7 @@ import {Lock, User, Message, Connection, Unlock} from "@element-plus/icons-vue";
 import router from "@/router/index.js";
 import {reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
+import {post} from "@/net/index.js";
 
 const form = reactive({
   username: '',
@@ -56,6 +57,17 @@ const register = () => {
   })
 }
 
+const validateEmail = ()=>{
+  post("api/auth/valid-email", {
+    email: form.email,
+  },(message) =>{
+    if (message === 'success'){
+      ElMessage.success('验证成功')
+    }else {
+      ElMessage.error(message)
+    }
+  })
+}
 
 const rules = {
   username: [
@@ -71,7 +83,7 @@ const rules = {
   ],
   email: [
     {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']}
   ],
   code: [
     {required: true, message: '请输入验证码', trigger: 'blur'},
@@ -146,7 +158,7 @@ const rules = {
               </el-input>
             </el-col>
             <el-col :span="6">
-              <el-button :disabled=" ! isEmailValid" type="success" style="width: 100%;">获取验证码</el-button>
+              <el-button :disabled=" ! isEmailValid" @click="validateEmail" type="success" style="width: 100%;">获取验证码</el-button>
             </el-col>
           </el-row>
         </el-form-item>

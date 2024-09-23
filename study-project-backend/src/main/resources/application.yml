@@ -5,3 +5,19 @@ spring:
     url: jdbc:mysql://localhost:3306/study_db?serverTimezone=Asia/Seoul&useSSL=false&useUnicode=true&characterEncoding=utf8
     username: root
     password: 123456
+  mail:
+    host: smtp.qq.com
+    username: 167730646@qq.com
+    password: qfbonogxvbckbjhc
+    port: 465
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+          socketFactoryClass: javax.net.ssl.SSLSocketFactory
+          socketFactory.port: 465
+          ssl.enable: true
+          debug: true
+
