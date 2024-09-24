@@ -5,16 +5,17 @@ import com.example.studyprojectbackend.mapper.UserMapper;
 import com.example.studyprojectbackend.service.AuthorizeService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 //权限校验service
 @Service
@@ -38,12 +39,15 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     UserMapper userMapper;
 
     @Value("${spring.mail.username}")
-
     String from;
+
+    //redis操作模板
+    @Resource
+    StringRedisTemplate template;
 
 
     @Override
-    public boolean sendValidateEmail(String email) {
+    public boolean sendValidateEmail(String email, String sessionId) {
         // 生成验证码
         Random random = new Random();
         int code = random.nextInt(899999) + 100000;
@@ -57,11 +61,13 @@ public class AuthorizeServiceImpl implements AuthorizeService {
         // 主题
         message.setSubject("您的验证邮箱");
         // 邮件内容
-        message.setText("验证码是：" + code);
+        message.setText("验证码是：" + code+"。\n请勿泄露给其他人，1分钟有效");
 
         try {
             // 发送邮件
             mailSender.send(message);
+            String key = "email:" + sessionId + ":" + email;
+            template.opsForValue().set(key, String.valueOf(code), 3, TimeUnit.MINUTES);
             return true;
         } catch (MailException e) {
             e.printStackTrace(); // 捕获异常
@@ -89,5 +95,9 @@ public class AuthorizeServiceImpl implements AuthorizeService {
                 .password(accountByNameOrEmail.getPassword())
                 .authorities("user")
                 .build();
+    }
+
+    public boolean isExist(String text){
+        return userMapper.findAccountByNameOrEmail(text) != null;
     }
 }

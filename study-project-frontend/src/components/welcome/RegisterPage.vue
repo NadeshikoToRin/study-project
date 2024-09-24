@@ -5,6 +5,7 @@ import router from "@/router/index.js";
 import {reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
 import {post} from "@/net/index.js";
+import axios from "axios";
 
 const form = reactive({
   username: '',
@@ -18,7 +19,7 @@ const form = reactive({
 const validateUsername = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('求输入用户名'));
-  } else if (!/^[a-zA-Z\u4e00-\u9fa5]+$/.test(value)) {
+  } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
     callback(new Error('用户名不得包含特殊字符，3-16位'));
   } else {
     callback();
@@ -38,7 +39,6 @@ const validatePassword = (rule, value, callback) => {
 const isEmailValid = ref(false);
 
 const formRef = ref()
-
 
 const onValidate = (prop, isValid) => {
   if (prop === 'email') {
@@ -61,18 +61,33 @@ const validateEmail = ()=>{
   post("api/auth/valid-email", {
     email: form.email,
   },(message) =>{
-    if (message === 'success'){
-      ElMessage.success('验证成功')
-    }else {
-      ElMessage.error(message)
-    }
+    ElMessage.success(message)
   })
 }
+const verifySaved = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请填写用户名或邮箱'));
+  }
+
+  axios.post('api/auth/verify-saved', { text: value })
+      .then(response => {
+        if (response.data.status === 200) {
+          callback(); // 用户名或邮箱可用
+        } else {
+          callback(new Error(response.data.message)); // 用户名或邮箱已存在
+        }
+      })
+      .catch(error => {
+        callback(new Error('验证失败，请重试'));
+      });
+};
+
 
 const rules = {
   username: [
     {validator: validateUsername, trigger: ['blur', 'change']},
-    {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur']}
+    {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur']},
+    {validator:verifySaved,message: "用户名或邮箱重复", trigger: 'blur'}
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
@@ -82,12 +97,13 @@ const rules = {
     {validator: validatePassword, trigger: 'blur'}
   ],
   email: [
-    {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']}
+    // {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']},
+    {validator:verifySaved,message: "用户名或邮箱重复", trigger: 'blur'}
   ],
   code: [
     {required: true, message: '请输入验证码', trigger: 'blur'},
-    // {min: 6, max: 6, message: '长度为6个字符', trigger: 'blur'}
+    {min: 6, max: 6, message: '长度为6个字符', trigger: 'blur'}
   ]
 }
 

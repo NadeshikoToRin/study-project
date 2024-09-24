@@ -68,6 +68,7 @@ public class SecurityConfiguration {
 
                 // 禁用CSRF保护，并配置CORS
                 .csrf(csrf -> csrf.disable()) // 禁用CSRF保护
+
                 .cors(cors -> cors.configurationSource(configurationSource())) // 配置跨域
 
                 // 配置自定义未授权处理逻辑
