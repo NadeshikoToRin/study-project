@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +49,15 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
     @Override
     public boolean sendValidateEmail(String email, String sessionId) {
+
+        String key = "email:" + sessionId + ":" + email;
+
+        //判断redis中是否存在该键值对
+        if (Boolean.TRUE.equals(template.hasKey(key))) {
+            Long expire = Optional.ofNullable(template.getExpire(key, TimeUnit.SECONDS)).orElse(0L);
+            if (expire > 120)
+                return false;
+        }
         // 生成验证码
         Random random = new Random();
         int code = random.nextInt(899999) + 100000;
@@ -61,12 +71,12 @@ public class AuthorizeServiceImpl implements AuthorizeService {
         // 主题
         message.setSubject("您的验证邮箱");
         // 邮件内容
-        message.setText("验证码是：" + code+"。\n请勿泄露给其他人，1分钟有效");
+        message.setText("验证码是：" + code+"。\n请勿泄露给其他人，3分钟有效");
 
         try {
             // 发送邮件
             mailSender.send(message);
-            String key = "email:" + sessionId + ":" + email;
+
             template.opsForValue().set(key, String.valueOf(code), 3, TimeUnit.MINUTES);
             return true;
         } catch (MailException e) {
