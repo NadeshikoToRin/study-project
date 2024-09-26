@@ -7,4 +7,6 @@ public interface AuthorizeService extends UserDetailsService {
     boolean sendValidateEmail(String email,String sessionId);
 
     boolean isExist(String text);
+
+
 }

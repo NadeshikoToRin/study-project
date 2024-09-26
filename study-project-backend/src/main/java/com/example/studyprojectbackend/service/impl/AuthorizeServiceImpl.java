@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,8 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     //redis操作模板
     @Resource
     StringRedisTemplate template;
+
+
 
 
     @Override

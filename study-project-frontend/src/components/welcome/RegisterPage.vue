@@ -86,12 +86,12 @@ const verifySaved = (rule, value, callback) => {
 const rules = {
   username: [
     {validator: validateUsername, trigger: ['blur', 'change']},
-    {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur']},
+    {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur', 'change']},
     {validator:verifySaved,message: "用户名或邮箱重复", trigger: 'blur'}
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
-    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: 'blur'}
+    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur', 'change']}
   ],
   password_repeat: [
     {validator: validatePassword, trigger: 'blur'}
@@ -123,7 +123,7 @@ const rules = {
     <div style="margin-top: 50px">
       <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
         <el-form-item prop="username">
-          <el-input v-model="form.username" type="text" placeholder="用户名/邮箱">
+          <el-input v-model="form.username" :maxlength="17" type="text" placeholder="用户名/邮箱">
             <template #prefix>
               <el-icon>
                 <User/>
@@ -133,7 +133,7 @@ const rules = {
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input v-model="form.password" type="password" placeholder="密码">
+          <el-input v-model="form.password" :maxlength="17" type="password" placeholder="密码">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -143,7 +143,7 @@ const rules = {
         </el-form-item>
 
         <el-form-item prop="password_repeat">
-          <el-input v-model="form.password_repeat" type="password" placeholder="确认密码">
+          <el-input v-model="form.password_repeat" :maxlength="16" type="password" placeholder="确认密码">
             <template #prefix>
               <el-icon>
                 <Unlock/>
@@ -153,7 +153,7 @@ const rules = {
         </el-form-item>
 
         <el-form-item prop="email">
-          <el-input v-model="form.email" type="email" placeholder="电子邮箱">
+          <el-input v-model="form.email"  type="email" placeholder="电子邮箱">
             <template #prefix>
               <el-icon>
                 <Message/>
@@ -165,7 +165,7 @@ const rules = {
         <el-form-item prop="code">
           <el-row :gutter="3" style="width: 100%">
             <el-col :span="18">
-              <el-input v-model="form.code" type="text" placeholder="邮箱验证码">
+              <el-input v-model="form.code" :maxlength="6" type="text" placeholder="邮箱验证码">
                 <template #prefix>
                   <el-icon>
                     <Connection/>

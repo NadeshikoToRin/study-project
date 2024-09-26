@@ -5,6 +5,7 @@ import com.example.studyprojectbackend.service.AuthorizeService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,8 @@ public class AuthorizeController {
 
     // 邮箱正则表达式
     private final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    //用户名称正则表达式
+    private final String USERNAME_REGEX = "^[a-zA-Z0-9\\u4e00-\\u9fa5]+$";
 
 
     @Resource
@@ -46,6 +49,17 @@ public class AuthorizeController {
             return RestBean.failure(400, "用户已存在");
         }
     }
+
+
+    //处理注册逻辑
+//    @PostMapping("/register")
+//    public RestBean<String> register(@Pattern(regexp = USERNAME_REGEX) @RequestParam("username") String username,
+//                                     @Length(min = 6,max = 16) @RequestParam("password") String password,
+//                                     @Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email,
+//                                     @Length(min = 6,max = 6) @RequestParam("code") String code) {
+//
+//
+//    }
 
 
 }
