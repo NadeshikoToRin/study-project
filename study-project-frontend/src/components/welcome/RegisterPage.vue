@@ -15,6 +15,10 @@ const form = reactive({
   code: ''
 })
 
+
+
+
+
 // 验证用户名
 const validateUsername = (rule, value, callback) => {
   if (value === '') {
@@ -36,7 +40,13 @@ const validatePassword2 = (rule, value, callback) => {
   }
 }
 
+// 邮箱验证
 const isEmailValid = ref(false);
+// 是否发送验证码
+const isSendEmail = ref(false);
+
+const coldTime = ref(0)
+
 
 const formRef = ref()
 
@@ -70,6 +80,10 @@ const validateEmail = ()=>{
     email: form.email,
   },(message) =>{
     ElMessage.success(message)
+    coldTime.value = 60;
+    setInterval(() => {
+      coldTime.value--;
+    }, 1000);
   })
 }
 const verifySaved = (rule, value, callback) => {
@@ -193,7 +207,10 @@ const rules = {
               </el-input>
             </el-col>
             <el-col :span="6">
-              <el-button :disabled=" ! isEmailValid" @click="validateEmail" type="success" style="width: 100%;">获取验证码</el-button>
+              <el-button  @click="validateEmail" type="success" style="width: 100%;" :disabled="
+              !isEmailValid || isSendEmail || coldTime > 0">
+                {{coldTime > 0 ? coldTime+"s": '发送验证码'}}
+              </el-button>
             </el-col>
           </el-row>
         </el-form-item>
