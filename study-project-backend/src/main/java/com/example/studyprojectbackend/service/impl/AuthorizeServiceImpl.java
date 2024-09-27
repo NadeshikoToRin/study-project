@@ -12,6 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -47,11 +48,14 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     @Resource
     StringRedisTemplate template;
 
+    //密码加密
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
 
 
 
     @Override
-    public boolean sendValidateEmail(String email, String sessionId) {
+    public String sendValidateEmail(String email, String sessionId) {
 
         String key = "email:" + sessionId + ":" + email;
 
@@ -59,12 +63,15 @@ public class AuthorizeServiceImpl implements AuthorizeService {
         if (Boolean.TRUE.equals(template.hasKey(key))) {
             Long expire = Optional.ofNullable(template.getExpire(key, TimeUnit.SECONDS)).orElse(0L);
             if (expire > 120)
-                return false;
+                return "请求频繁，请稍后再试！";
+        }
+        //如果存在，则返回
+        if (userMapper.findAccountByNameOrEmail(email) !=null){
+            return "该邮箱已被注册！";
         }
         // 生成验证码
         Random random = new Random();
         int code = random.nextInt(899999) + 100000;
-
         // 创建邮件信息
         SimpleMailMessage message = new SimpleMailMessage();
         // 发送者
@@ -81,15 +88,12 @@ public class AuthorizeServiceImpl implements AuthorizeService {
             mailSender.send(message);
 
             template.opsForValue().set(key, String.valueOf(code), 3, TimeUnit.MINUTES);
-            return true;
+            return null;
         } catch (MailException e) {
             e.printStackTrace(); // 捕获异常
-            return false;
+            return "发送失败，请检查邮件地址是否有效";
         }
     }
-
-
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -112,5 +116,29 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
     public boolean isExist(String text){
         return userMapper.findAccountByNameOrEmail(text) != null;
+    }
+
+
+    // 校验验证码和注册
+    @Override
+    public String validateAndRegister(String username, String password, String email, String code,String sessionId) {
+        String key = "email:" + sessionId + ":" + email;
+        if (Boolean.TRUE.equals(template.hasKey(key))) {
+            String s = template.opsForValue().get(key);
+            if (s == null) return "验证码失效，请重新请求";
+            if (s.equals(code)){
+                //加密密码
+                password = encoder.encode(password);
+                if (userMapper.createAccount(username,email,password) > 0) {
+                    return null;
+                } else {
+                    return "内部错误，请联系管理员";
+                }
+            }else {
+                return "验证码错误";
+            }
+        }else {
+            return "请先获取验证码";
+        }
     }
 }

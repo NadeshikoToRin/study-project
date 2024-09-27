@@ -26,7 +26,7 @@ const validateUsername = (rule, value, callback) => {
   }
 };
 // 验证密码
-const validatePassword = (rule, value, callback) => {
+const validatePassword2 = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请再次输入密码'));
   } else if (value !== form.password) {
@@ -50,7 +50,15 @@ const register = () => {
   formRef.value.validate((isValid) =>{
     //如果全部填写正确
     if (isValid){
-
+      post('/api/auth/register', {
+        username: form.username,
+        password: form.password,
+        email: form.email,
+        code: form.code
+      }, (message) => {
+        ElMessage.success(message)
+        router.push('/')
+      })
     }else {
       ElMessage.warning('请检查输入信息')
     }
@@ -82,6 +90,16 @@ const verifySaved = (rule, value, callback) => {
       });
 };
 
+const validatePassword1 = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入密码'));
+  } else if (/\s/.test(value)) {  // Checks for spaces, tabs, or newline characters
+    callback(new Error('密码不得包含空格、制表符或换行符'));
+  } else {
+    callback();
+  }
+}
+
 
 const rules = {
   username: [
@@ -91,10 +109,11 @@ const rules = {
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
-    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur', 'change']}
+    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur', 'change']},
+    {validator: validatePassword1,trigger: ['blur', 'change']}
   ],
   password_repeat: [
-    {validator: validatePassword, trigger: 'blur'}
+    {validator: validatePassword2, trigger: 'blur'}
   ],
   email: [
     // {required: true, message: '请输入邮箱地址', trigger: 'blur'},

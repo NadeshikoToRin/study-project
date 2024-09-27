@@ -31,10 +31,11 @@ public class AuthorizeController {
     public RestBean<String> validateEmail(@Pattern(regexp = EMAIL_REGEX)
                                           @RequestParam("email") String email,
                                           HttpSession session) {
-        if (authorizeService.sendValidateEmail(email, session.getId()))
+        String s = authorizeService.sendValidateEmail(email, session.getId());
+        if (s == null)
             return RestBean.success("邮件已发送，请注意查收");
         else
-            return RestBean.failure(400, "邮件发送失败，请联系管理员");
+            return RestBean.failure(400, s);
     }
 
     @RequestMapping(value = "/verify-saved", method = RequestMethod.POST)
@@ -52,14 +53,18 @@ public class AuthorizeController {
 
 
     //处理注册逻辑
-//    @PostMapping("/register")
-//    public RestBean<String> register(@Pattern(regexp = USERNAME_REGEX) @RequestParam("username") String username,
-//                                     @Length(min = 6,max = 16) @RequestParam("password") String password,
-//                                     @Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email,
-//                                     @Length(min = 6,max = 6) @RequestParam("code") String code) {
-//
-//
-//    }
+    @PostMapping("/register")
+    public RestBean<String> register(@Pattern(regexp = USERNAME_REGEX) @RequestParam("username") String username,
+                                     @Length(min = 6, max = 16) @RequestParam("password") String password,
+                                     @Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email,
+                                     @Length(min = 6, max = 6) @RequestParam("code") String code,
+                                     HttpSession session) {
 
-
+        String s = authorizeService.validateAndRegister(username, password, email, code, session.getId());
+        if (s == null) {
+            return RestBean.success("注册成功!");
+        } else {
+            return RestBean.failure(400, s);
+        }
+    }
 }

@@ -49,6 +49,17 @@ const validateUsername = (rule, value, callback) => {
   }
 };
 
+const validatePassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入密码'));
+  } else if (/\s/.test(value)) {  // Checks for spaces, tabs, or newline characters
+    callback(new Error('密码不得包含空格、制表符或换行符'));
+  } else {
+    callback();
+  }
+}
+
+
 
 const rules = {
   username: [
@@ -57,7 +68,8 @@ const rules = {
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
-    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: 'blur'}
+    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur','change']},
+    {validator:validatePassword,trigger: ['blur', 'change']}
   ]
 }
 
