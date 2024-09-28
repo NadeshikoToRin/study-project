@@ -42,7 +42,7 @@ const login = () => {
 const validateUsername = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('求输入用户名'));
-  } else if (!/^[a-zA-Z\u4e00-\u9fa5]+$/.test(value)) {
+  } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
     callback(new Error('用户名不得包含特殊字符，3-16位'));
   } else {
     callback();

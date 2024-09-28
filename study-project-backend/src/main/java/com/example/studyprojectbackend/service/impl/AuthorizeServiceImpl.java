@@ -4,6 +4,7 @@ import com.example.studyprojectbackend.entity.Account;
 import com.example.studyprojectbackend.mapper.UserMapper;
 import com.example.studyprojectbackend.service.AuthorizeService;
 import jakarta.annotation.Resource;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.MailException;
@@ -55,9 +56,9 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
 
     @Override
-    public String sendValidateEmail(String email, String sessionId) {
+    public String sendValidateEmail(String email, String sessionId,boolean requireAccount) {
 
-        String key = "email:" + sessionId + ":" + email;
+        String key = "email:" + sessionId + ":" + email+":"+requireAccount;
 
         //判断redis中是否存在该键值对
         if (Boolean.TRUE.equals(template.hasKey(key))) {
@@ -65,8 +66,15 @@ public class AuthorizeServiceImpl implements AuthorizeService {
             if (expire > 120)
                 return "请求频繁，请稍后再试！";
         }
-        //如果存在，则返回
-        if (userMapper.findAccountByNameOrEmail(email) !=null){
+
+        Account account = userMapper.findAccountByNameOrEmail(email);
+
+        //处理忘记密码请求
+        if (requireAccount && account == null) {
+            return "没有该账户，请先注册！";
+        }
+        //处理注册请求
+        if (account != null && !requireAccount) {
             return "该邮箱已被注册！";
         }
         // 生成验证码
@@ -122,11 +130,15 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     // 校验验证码和注册
     @Override
     public String validateAndRegister(String username, String password, String email, String code,String sessionId) {
-        String key = "email:" + sessionId + ":" + email;
+        String key = "email:" + sessionId + ":" + email+":"+false;
         if (Boolean.TRUE.equals(template.hasKey(key))) {
             String s = template.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
             if (s.equals(code)){
+                Account account = userMapper.findAccountByNameOrEmail(username);
+                if (account != null) return "该用户名已被注册";
+                //删除redis中的数据
+                template.delete(key);
                 //加密密码
                 password = encoder.encode(password);
                 if (userMapper.createAccount(username,email,password) > 0) {
@@ -140,5 +152,30 @@ public class AuthorizeServiceImpl implements AuthorizeService {
         }else {
             return "请先获取验证码";
         }
+    }
+    @Override
+    public String validateOnly(String email, String code, String sessionId) {
+        String key = "email:" + sessionId + ":" + email + ":" + true;
+        if (Boolean.TRUE.equals(template.hasKey(key))) {
+            String s = template.opsForValue().get(key);
+            if (s == null) return "验证码失效，请重新请求";
+            if (s.equals(code)){
+                //删除redis中的数据
+                template.delete(key);
+                return null;
+            }else {
+                return "验证码错误";
+            }
+        }else {
+            return "请先获取验证码";
+        }
+    }
+
+    @Override
+    public boolean resetPassword(String password, String email) {
+        //加密密码
+        password = encoder.encode(password);
+        //更新密码
+        return userMapper.resetPasswordByEmail(password, email) >0;
     }
 }

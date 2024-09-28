@@ -53,7 +53,7 @@
           </el-form>
         </div>
         <div style="margin-top: 70px">
-          <el-button @click="active = 1" style="width: 270px" type="danger" plain>重置密码</el-button>
+          <el-button @click="startRest" style="width: 270px" type="danger" plain>开始重置密码</el-button>
         </div>
       </div>
 
@@ -88,7 +88,7 @@
           </el-form>
 
           <div style="margin-top: 70px">
-            <el-button @click="active = 1" style="width: 270px" type="danger" plain>重置密码</el-button>
+            <el-button @click="doReset" style="width: 270px" type="danger" plain>立即重置密码</el-button>
           </div>
         </div>
 
@@ -112,6 +112,8 @@ const active = ref(0);
 // 邮箱验证
 const isEmailValid = ref(false);
 
+const formRef = ref();
+
 const onValidate = (prop: any, isValid: any) => {
   if (prop === 'email') {
     isEmailValid.value = isValid;
@@ -120,26 +122,18 @@ const onValidate = (prop: any, isValid: any) => {
 
 const form = reactive({
   email: '',
-  code: ''
+  code: '',
+  password: '',
+  password_repeat: '',
 })
 
 const isSendEmail = ref(false);
 
 const coldTime = ref(0)
 
-const validateEmail = () => {
-  post("api/auth/valid-email", {
-    email: form.email,
-  }, (message: any) => {
-    ElMessage.success(message)
-    coldTime.value = 60;
-    setInterval(() => {
-      coldTime.value--;
-    }, 1000);
-  })
-}
+
 // 验证密码
-const validatePassword1 = (rule, value, callback) => {
+const validatePassword1 = (rule: any, value:any, callback:any) => {
   if (value === '') {
     callback(new Error('请输入密码'));
   } else if (/\s/.test(value)) {  // Checks for spaces, tabs, or newline characters
@@ -150,7 +144,7 @@ const validatePassword1 = (rule, value, callback) => {
 }
 
 // 验证密码
-const validatePassword2 = (rule, value, callback) => {
+const validatePassword2 = (rule:any, value:any, callback:any) => {
   if (value === '') {
     callback(new Error('请再次输入密码'));
   } else if (value !== form.password) {
@@ -160,10 +154,25 @@ const validatePassword2 = (rule, value, callback) => {
   }
 }
 
+const validateEmail = ()=>{
+  post("api/auth/valid-reset-email", {
+    email: form.email,
+  },(message:any) =>{
+    ElMessage.success(message)
+    coldTime.value = 60;
+    const interval = setInterval(() => {
+      coldTime.value--;
+      if(coldTime.value <= 0){
+        clearInterval(interval);
+        coldTime.value = 0;
+      }
+    }, 1000);
+  })
+}
 const rules = {
   email: [
-    // {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']},
+    {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']},
   ],
   code: [
     {required: true, message: '请输入验证码', trigger: 'blur'},
@@ -183,6 +192,38 @@ const returnToPrevious = () => {
   if(active.value-- ===0){
     router.go(-1)
   }
+}
+
+const startRest = ()=>{
+  formRef.value.validate((isValid:any) =>{
+    //如果全部填写正确
+    if (isValid){
+      post('/api/auth/start-reset', {
+        email:form.email,
+        code:form.code
+      },()=>{
+        active.value++
+      })
+    }else {
+      ElMessage.warning('请检查输入邮件和验证码')
+    }
+  })
+}
+
+const doReset = ()=>{
+  formRef.value.validate((isValid:any) =>{
+    //如果全部填写正确
+    if (isValid){
+      post('/api/auth/do-reset', {
+        password:form.password
+      },(message:any)=>{
+        ElMessage.success(message)
+        router.push('/')
+      })
+    }else {
+      ElMessage.warning('请检查输入邮件和验证码')
+    }
+  })
 }
 </script>
 

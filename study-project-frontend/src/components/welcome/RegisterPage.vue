@@ -76,13 +76,17 @@ const register = () => {
 }
 
 const validateEmail = ()=>{
-  post("api/auth/valid-email", {
+  post("api/auth/valid-register-email", {
     email: form.email,
   },(message) =>{
     ElMessage.success(message)
     coldTime.value = 60;
-    setInterval(() => {
+    const interval = setInterval(() => {
       coldTime.value--;
+      if(coldTime.value <= 0){
+        clearInterval(interval);
+        coldTime.value = 0;
+      }
     }, 1000);
   })
 }
@@ -90,7 +94,6 @@ const verifySaved = (rule, value, callback) => {
   if (!value) {
     return callback(new Error('请填写用户名或邮箱'));
   }
-
   axios.post('api/auth/verify-saved', { text: value })
       .then(response => {
         if (response.data.status === 200) {
@@ -131,7 +134,7 @@ const rules = {
   ],
   email: [
     // {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur']},
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']},
     {validator:verifySaved,message: "用户名或邮箱重复", trigger: 'blur'}
   ],
   code: [
