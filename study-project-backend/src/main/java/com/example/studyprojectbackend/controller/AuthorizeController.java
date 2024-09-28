@@ -49,8 +49,6 @@ public class AuthorizeController {
         else
             return RestBean.failure(400, s);
     }
-
-
     @RequestMapping(value = "/verify-saved", method = RequestMethod.POST)
     public RestBean<String> verifySaved(@RequestBody Map<String, String> requestBody) {
         String text = requestBody.get("text");
@@ -63,8 +61,6 @@ public class AuthorizeController {
             return RestBean.failure(400, "用户已存在");
         }
     }
-
-
     //处理注册逻辑
     @PostMapping("/register")
     public RestBean<String> register(@Pattern(regexp = USERNAME_REGEX) @RequestParam("username") String username,

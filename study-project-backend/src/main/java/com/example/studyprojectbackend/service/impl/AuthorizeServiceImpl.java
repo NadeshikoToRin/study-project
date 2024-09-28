@@ -1,10 +1,9 @@
 package com.example.studyprojectbackend.service.impl;
 
-import com.example.studyprojectbackend.entity.Account;
+import com.example.studyprojectbackend.entity.auth.Account;
 import com.example.studyprojectbackend.mapper.UserMapper;
 import com.example.studyprojectbackend.service.AuthorizeService;
 import jakarta.annotation.Resource;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.MailException;

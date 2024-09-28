@@ -1,6 +1,6 @@
 package com.example.studyprojectbackend.mapper;
 
-import com.example.studyprojectbackend.entity.Account;
+import com.example.studyprojectbackend.entity.auth.Account;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
