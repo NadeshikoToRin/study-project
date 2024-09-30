@@ -1,5 +1,3 @@
----
-
 # 基于 Spring Boot 3 + Vue 3 的前后端分离项目
 
 ## 项目简介
@@ -204,8 +202,6 @@
 ![忘记密码第一步](preview-image/forget_step1.png)
 
 ![忘记密码第二步](preview-image/forget_step2.png)
-
----
 
 ## 安装与运行
 
