@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-这是一个基于 **Spring Boot 3** 和 **Vue 3** 的前后端分离项目，支持二次开发，旨在提供一个简洁易用的开发框架，快速搭建功能丰富的Web应用。项目主要实现了用户管理、权限控制和基本的消息交互功能，适合用作学习和扩展。
+这是一个基于 JDK 17、Spring Boot 3、Spring Security 6、JWT、Redis、Mybatis、Vue 3、Element-Plus 构建的前后端分离项目，支持二次开发，旨在提供一个简洁易用的开发框架，快速搭建功能丰富的Web应用。项目主要实现了用户管理、权限控制和高鲁棒性的登录注册功能，适合用作学习和扩展。
 
 ## 项目仓库
 
@@ -42,13 +42,7 @@
 │  │  │              │	  └─AuthorizeServiceImpl // 处理验证逻辑
 │  │  │              │  ├─AuthorizeService // 验证相关接口
 │  │  │              └─utils       // 工具类
-│  │  └─resources                    // 资源文件
-│  └─test                            // 测试代码目录
-│      └─java                        // Java 测试代码
-│          └─com
-│              └─example
-│                  └─studyprojectbackend          
-└─target                             // 编译输出目录
+└─ └─ └─resources                    // 资源文件
 ```
 
 ## 前端项目结构
@@ -62,9 +56,8 @@
     │  	 └─LoginPage.vue           // 登录页面
     │  	 └─RegisterPage.vue        // 注册页面
     ├─net              			  // 封装请求方法模块
-    ├─router                       // 路由配置
-    ├─stores                       // 状态管理，组件间通信
-    │  └─app                       
+    ├─router                       // 路由配置，配置路由守卫，用户必须登录才能访问IndexVue下的页面
+    ├─stores                       // 状态管理，组件间通信                      
     ├─views                        // 视图文件
     │  └─Welcome.vue               // 欢迎页面,登录、注册、忘记密码的父视图
     │  └─IndexVue.vue              // 登录成功显示页面

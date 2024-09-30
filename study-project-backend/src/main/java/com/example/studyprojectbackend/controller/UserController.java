@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 public class UserController {
 
     @GetMapping("/me")
-    public RestBean<AccountUser> me(@SessionAttribute("account") AccountUser user){
+    public RestBean<AccountUser> me(@SessionAttribute(value = "account", required = false) AccountUser user) {
         return RestBean.success(user);
     }
+
 }

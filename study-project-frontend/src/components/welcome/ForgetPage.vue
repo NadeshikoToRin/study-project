@@ -99,7 +99,7 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 import {ref, reactive} from 'vue';
 import {Connection, Message, Back, Lock, Unlock} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
@@ -114,7 +114,7 @@ const isEmailValid = ref(false);
 
 const formRef = ref();
 
-const onValidate = (prop: any, isValid: any) => {
+const onValidate = (prop, isValid) => {
   if (prop === 'email') {
     isEmailValid.value = isValid;
   }
@@ -133,7 +133,7 @@ const coldTime = ref(0)
 
 
 // 验证密码
-const validatePassword1 = (rule: any, value:any, callback:any) => {
+const validatePassword1 = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入密码'));
   } else if (/\s/.test(value)) {  // Checks for spaces, tabs, or newline characters
@@ -144,7 +144,7 @@ const validatePassword1 = (rule: any, value:any, callback:any) => {
 }
 
 // 验证密码
-const validatePassword2 = (rule:any, value:any, callback:any) => {
+const validatePassword2 = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请再次输入密码'));
   } else if (value !== form.password) {
@@ -157,7 +157,7 @@ const validatePassword2 = (rule:any, value:any, callback:any) => {
 const validateEmail = ()=>{
   post("api/auth/valid-reset-email", {
     email: form.email,
-  },(message:any) =>{
+  },(message) =>{
     ElMessage.success(message)
     coldTime.value = 60;
     const interval = setInterval(() => {
@@ -195,7 +195,7 @@ const returnToPrevious = () => {
 }
 
 const startRest = ()=>{
-  formRef.value.validate((isValid:any) =>{
+  formRef.value.validate((isValid) =>{
     //如果全部填写正确
     if (isValid){
       post('/api/auth/start-reset', {
@@ -211,12 +211,12 @@ const startRest = ()=>{
 }
 
 const doReset = ()=>{
-  formRef.value.validate((isValid:any) =>{
+  formRef.value.validate((isValid) =>{
     //如果全部填写正确
     if (isValid){
       post('/api/auth/do-reset', {
         password:form.password
-      },(message:any)=>{
+      },(message)=>{
         ElMessage.success(message)
         router.push('/')
       })

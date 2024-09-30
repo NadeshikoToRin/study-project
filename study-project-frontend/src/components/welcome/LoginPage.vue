@@ -3,8 +3,9 @@
 import {Lock, User} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
-import {post} from "@/net/index.js";
+import {get, post} from "@/net/index.js";
 import router from "@/router/index.js";
+import {useStore} from "@/stores/index.js";
 
 const form = reactive({
   username: '',
@@ -13,13 +14,8 @@ const form = reactive({
 })
 
 const formRef = ref();
-// const isLogin = ref(false)
 
-// const onValidate = (prop, isValid) => {
-//   if (prop === 'username' || prop === 'password') {
-//     isLogin.value = isValid;
-//   }
-// }
+const store = useStore();
 
 const login = () => {
   formRef.value.validate((valid) => {
@@ -30,7 +26,12 @@ const login = () => {
         remember: form.remember
       }, (message) => {
         ElMessage.success(message)
-        router.push('/index')
+        get('api/user/me',(message) =>{
+          store.auth.user = message;
+          router.push('/index')
+        },()=>{
+          store.auth.user = null;
+        })
       })
     } else {
       ElMessage.warning('请输入用户名和密码')
@@ -38,16 +39,6 @@ const login = () => {
   })
 }
 
-
-// const validateUsername = (rule, value, callback) => {
-//   if (value === '') {
-//     callback(new Error('求输入用户名'));
-//   } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
-//     callback(new Error('用户名不得包含特殊字符，3-16位'));
-//   } else {
-//     callback();
-//   }
-// };
 
 const validatePassword = (rule, value, callback) => {
   if (value === '') {

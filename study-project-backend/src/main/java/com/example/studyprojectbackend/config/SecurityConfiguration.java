@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                 // 禁用CSRF保护，并配置CORS
                 .csrf(AbstractHttpConfigurer::disable) // 禁用CSRF保护
 
-                .cors(cors -> cors.configurationSource(configurationSource())) // 配置跨域
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 配置跨域
 
                 // 配置自定义未授权处理逻辑
                 .exceptionHandling(exceptions -> exceptions
@@ -102,14 +102,15 @@ public class SecurityConfiguration {
     /**
      * 配置跨域策略
      */
-    private CorsConfigurationSource configurationSource() {
+    private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
-        cors.addAllowedOriginPattern("*"); // 允许所有来源
-        cors.setAllowCredentials(true); // 允许发送凭证
-        cors.addAllowedHeader("*"); // 允许所有请求头
-        cors.addAllowedMethod("*"); // 允许所有请求方法
+        cors.addAllowedOriginPattern("*");
+        cors.setAllowCredentials(true);
+        cors.addAllowedHeader("*");
+        cors.addAllowedMethod("*");
+        cors.addExposedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors); // 注册全局跨域配置
+        source.registerCorsConfiguration("/**", cors);
         return source;
     }
 
