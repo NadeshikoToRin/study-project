@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-这是一个基于 JDK 17、Spring Boot 3、Spring Security 6、JWT、Redis、Mybatis、Vue 3、Element-Plus 构建的前后端分离项目。项目主要实现了用户管理、权限控制、邮箱验证、验证码验证、用户注册、密码重置等功能，旨在提供一个简洁易用且具有良好可扩展性的开发框架，支持快速搭建功能丰富的 Web 应用。
+这是一个基于 JDK 17、Spring Boot 3、Spring Security 6、Redis、Mybatis、Vue 3、Element-Plus 构建的前后端分离项目。项目主要实现了用户管理、权限控制、邮箱验证、验证码验证、用户注册、密码重置等功能，旨在提供一个简洁易用且具有良好可扩展性的开发框架，支持快速搭建功能丰富的 Web 应用。
 
 ## 项目仓库
 
@@ -12,8 +12,8 @@
 
 ## 技术栈
 
-- **后端**：Spring Boot 3、Spring Security 6、MyBatis、Redis、JWT、BCrypt 密码加密
-- **前端**：Vue 3、Element-Plus、Pinia 状态管理、Vue Router
+- **后端**：Spring Boot 3、Spring Security 6、MyBatis、Redis、BCrypt 密码加密
+- **前端**：Vue 3、Element-Plus、Pinia 状态管理、Vue Router、Vite
 - **数据库**：MySQL、Redis
 - **依赖管理**：Maven
 
@@ -49,7 +49,7 @@
 - **AuthorizeController**：处理用户登录、注册、邮箱验证、密码重置等请求。
 - **AuthorizeServiceImpl**：实现验证码的发送、校验及用户的注册、密码重置等业务逻辑。通过 Redis 存储验证码、BCrypt 加密用户密码。
 - **UserMapper**：提供与数据库的交互接口，处理用户信息的查询、更新、删除等操作。
-- **SecurityConfiguration**：使用 Spring Security 进行安全配置，支持 JWT 认证及权限控制。
+- **SecurityConfiguration**：使用 Spring Security 进行安全配置，支持 用户认证及权限控制。
 
 ## 前端项目结构
 
@@ -132,7 +132,7 @@
 - **实现原理**:
   - 用户通过输入用户名或邮箱和密码进行登录。
   - 后端使用 BCryptPasswordEncoder 加密存储的密码与用户输入的密码进行比较。
-  - 登录成功后，生成 JWT（JSON Web Token）并返回，客户端存储该 token 以便后续请求中使用。
+  - 登录成功后，通过session.setAttribute生成Account对象并返回，客户端存储该 对象以便后续请求中使用。
   - 前端使用 Vue Router 控制路由，确保用户必须登录才能访问受保护的页面。
 
 ### 2. 注册功能
@@ -160,8 +160,8 @@
 
 - **实现原理**:
   - 使用 `persistent_logins` 表存储用户的登录状态信息。
-  - 当用户选择“记住我”时，后端生成 token 并保存，设置有效期。
-  - 每次用户访问应用时，后端检查 token 是否有效，若有效则自动登录用户。
+  - 当用户选择“记住我”时，后端生成 session并保存，设置有效期。
+  - 每次用户访问应用时，后端检查 session是否有效，若有效则自动登录用户。
 
 ## 数据库结构
 
