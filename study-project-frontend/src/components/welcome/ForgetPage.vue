@@ -103,9 +103,8 @@
 import {ref, reactive} from 'vue';
 import {Connection, Message, Back, Lock, Unlock} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
-import {post} from "../../net";
-// import {post} from "@/net/index.js";
-import router from "../../router/index.js";
+import {post} from "@/net";
+import router from "@/router/index.js";
 
 //当前步骤
 const active = ref(0);
@@ -155,11 +154,11 @@ const validatePassword2 = (rule, value, callback) => {
 }
 
 const validateEmail = ()=>{
+  coldTime.value = 60;
   post("api/auth/valid-reset-email", {
     email: form.email,
   },(message) =>{
     ElMessage.success(message)
-    coldTime.value = 60;
     const interval = setInterval(() => {
       coldTime.value--;
       if(coldTime.value <= 0){
@@ -167,6 +166,9 @@ const validateEmail = ()=>{
         coldTime.value = 0;
       }
     }, 1000);
+  },(message)=>{
+    ElMessage.warning(message)
+    coldTime.value = 0;
   })
 }
 const rules = {
