@@ -1,10 +1,12 @@
----
-
 # 基于 Spring Boot 3 + Vue 3 的前后端分离项目
 
 ## 项目简介
 
 这是一个基于 **Spring Boot 3** 和 **Vue 3** 的前后端分离项目，支持二次开发，旨在提供一个简洁易用的开发框架，快速搭建功能丰富的Web应用。项目主要实现了用户管理、权限控制和基本的消息交互功能，适合用作学习和扩展。
+
+## 项目仓库
+
+[GitHub 仓库](https://github.com/NadeshikoToRin/study-project)
 
 ## 框架简介
 
@@ -55,14 +57,18 @@
 └─src                              // 源代码目录
     ├─assets                       // 静态资源
     ├─components                   // 组件
-    │  ├─form                      // 表单组件
-    │  └─message                   // 消息组件
-    ├─requestMethod                // 请求方法模块
+    │  └─welcome                   // 欢迎页面下的各个子组件
+    │  	 └─ForgetPage.vue          // 忘记密码页面   
+    │  	 └─LoginPage.vue           // 登录页面
+    │  	 └─RegisterPage.vue        // 注册页面
+    ├─net              			  // 封装请求方法模块
     ├─router                       // 路由配置
-    ├─stores                       // 状态管理
+    ├─stores                       // 状态管理，组件间通信
     │  └─app                       
-    ├─utils                        // 工具类函数
-    └─views                        // 视图文件
+    ├─views                        // 视图文件
+    │  └─Welcome.vue               // 欢迎页面,登录、注册、忘记密码的父视图
+    │  └─IndexVue.vue              // 登录成功显示页面
+    └─utils                        // 工具类函数
 ```
 
 ## 功能介绍
@@ -102,12 +108,12 @@
 
 ### `db_account` 表
 
-| 列名       | 数据类型     | 描述           |
-| ---------- | ------------ | -------------- |
-| `id`       | INT(20)      | 用户ID，主键   |
-| `username` | VARCHAR(255) | 用户名，UNIQUE |
-| `password` | VARCHAR(255) | 加密后的密码   |
-| `email`    | VARCHAR(255) | 邮箱，UNIQUE   |
+| 列名       | 数据类型     | 描述                              |
+| ---------- | ------------ | --------------------------------- |
+| `id`       | INT(20)      | 用户ID，主键                      |
+| `username` | VARCHAR(255) | 用户名，UNIQUE                    |
+| `password` | VARCHAR(255) | 加密后的密码                      |
+| `email`    | VARCHAR(255) | 邮箱，UNIQUE                      |
 
 ### `persistent_logins` 表
 
@@ -128,3 +134,26 @@
 
 ---
 
+## 效果图：
+
+#### 登录页面：
+
+![登录页面](preview-image\login.png)
+
+
+
+#### 注册页面：
+
+#### ![注册页面（用户名和密码不能与数据库中内容重复）](preview-image/register.png)
+
+
+
+#### 忘记密码：
+
+#### ![忘记密码第一步](preview-image/forget_step1.png)
+
+
+
+#### 忘记密码：
+
+#### ![忘记密码第一步](F:/findJob_2024/study-project/preview-image/forget_step2.png)

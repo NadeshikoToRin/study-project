@@ -39,15 +39,15 @@ const login = () => {
 }
 
 
-const validateUsername = (rule, value, callback) => {
-  if (value === '') {
-    callback(new Error('求输入用户名'));
-  } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
-    callback(new Error('用户名不得包含特殊字符，3-16位'));
-  } else {
-    callback();
-  }
-};
+// const validateUsername = (rule, value, callback) => {
+//   if (value === '') {
+//     callback(new Error('求输入用户名'));
+//   } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
+//     callback(new Error('用户名不得包含特殊字符，3-16位'));
+//   } else {
+//     callback();
+//   }
+// };
 
 const validatePassword = (rule, value, callback) => {
   if (value === '') {
@@ -63,7 +63,7 @@ const validatePassword = (rule, value, callback) => {
 
 const rules = {
   username: [
-    {validator: validateUsername, trigger: ['blur', 'change']},
+    // {validator: validateUsername, trigger: ['blur', 'change']},
     {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur']}
   ],
   password: [

@@ -16,13 +16,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthorizeController {
-
     // 邮箱正则表达式
     private final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     //用户名称正则表达式
     private final String USERNAME_REGEX = "^[a-zA-Z0-9\\u4e00-\\u9fa5]+$";
-
-
     @Resource
     AuthorizeService authorizeService;
 
@@ -49,6 +46,7 @@ public class AuthorizeController {
         else
             return RestBean.failure(400, s);
     }
+
     @RequestMapping(value = "/verify-saved", method = RequestMethod.POST)
     public RestBean<String> verifySaved(@RequestBody Map<String, String> requestBody) {
         String text = requestBody.get("text");
@@ -61,6 +59,7 @@ public class AuthorizeController {
             return RestBean.failure(400, "用户已存在");
         }
     }
+
     //处理注册逻辑
     @PostMapping("/register")
     public RestBean<String> register(@Pattern(regexp = USERNAME_REGEX) @RequestParam("username") String username,
@@ -76,8 +75,6 @@ public class AuthorizeController {
             return RestBean.failure(400, s);
         }
     }
-
-
     //忘记密码
 
     /**
@@ -85,7 +82,6 @@ public class AuthorizeController {
      * 2.验证sessionId+email+code是否在redis中
      * 3.修改密码
      */
-
     @RequestMapping("/start-reset")
     public RestBean<String> startReset(@Pattern(regexp = EMAIL_REGEX)
                                        @RequestParam("email") String email,
