@@ -1,6 +1,7 @@
 package com.example.studyprojectbackend.mapper;
 
 import com.example.studyprojectbackend.entity.auth.Account;
+import com.example.studyprojectbackend.entity.user.AccountUser;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -12,10 +13,15 @@ public interface UserMapper {
     @Select("select * from db_account where username = #{text} or email = #{text}")
     Account findAccountByNameOrEmail(String text);
 
+    // 根据用户名或邮箱查询用户
+    @Select("select * from db_account where username = #{text} or email = #{text}")
+    AccountUser findAccountUserByNameOrEmail(String text);
+
     //注册用户
     @Insert("insert into db_account(email,username,password) values(#{email},#{username},#{password})")
     int createAccount(String username, String email, String password);
 
+    //重置密码
     @Update("update db_account set password = #{password} where email = #{email}")
     int resetPasswordByEmail(String password, String email);
 }
