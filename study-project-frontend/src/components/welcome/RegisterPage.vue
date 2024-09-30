@@ -16,9 +16,6 @@ const form = reactive({
 })
 
 
-
-
-
 // 验证用户名
 const validateUsername = (rule, value, callback) => {
   if (value === '') {
@@ -57,9 +54,9 @@ const onValidate = (prop, isValid) => {
 }
 
 const register = () => {
-  formRef.value.validate((isValid) =>{
+  formRef.value.validate((isValid) => {
     //如果全部填写正确
-    if (isValid){
+    if (isValid) {
       post('/api/auth/register', {
         username: form.username,
         password: form.password,
@@ -69,26 +66,26 @@ const register = () => {
         ElMessage.success(message)
         router.push('/')
       })
-    }else {
+    } else {
       ElMessage.warning('请检查输入信息')
     }
   })
 }
 
-const validateEmail = ()=>{
+const validateEmail = () => {
   coldTime.value = 60;
   post("api/auth/valid-register-email", {
     email: form.email,
-  },(message) =>{
+  }, (message) => {
     ElMessage.success(message)
     const interval = setInterval(() => {
       coldTime.value--;
-      if(coldTime.value <= 0){
+      if (coldTime.value <= 0) {
         clearInterval(interval);
         coldTime.value = 0;
       }
     }, 1000);
-  },(message)=>{
+  }, (message) => {
     ElMessage.warning(message)
     coldTime.value = 0;
   })
@@ -97,7 +94,7 @@ const verifySaved = (rule, value, callback) => {
   if (!value) {
     return callback(new Error('请填写用户名或邮箱'));
   }
-  axios.post('api/auth/verify-saved', { text: value })
+  axios.post('api/auth/verify-saved', {text: value})
       .then(response => {
         if (response.data.status === 200) {
           callback(); // 用户名或邮箱可用
@@ -125,12 +122,12 @@ const rules = {
   username: [
     {validator: validateUsername, trigger: ['blur', 'change']},
     {min: 3, max: 16, message: '用户名长度在 3 到 16 个字符', trigger: ['blur', 'change']},
-    {validator:verifySaved,message: "用户名或邮箱重复", trigger: 'blur'}
+    {validator: verifySaved, message: "用户名或邮箱重复", trigger: 'blur'}
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
     {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur', 'change']},
-    {validator: validatePassword1,trigger: ['blur', 'change']}
+    {validator: validatePassword1, trigger: ['blur', 'change']}
   ],
   password_repeat: [
     {validator: validatePassword2, trigger: 'blur'}
@@ -138,7 +135,7 @@ const rules = {
   email: [
     // {required: true, message: '请输入邮箱地址', trigger: 'blur'},
     {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']},
-    {validator:verifySaved,message: "用户名或邮箱重复", trigger: 'blur'}
+    {validator: verifySaved, message: "用户名或邮箱重复", trigger: 'blur'}
   ],
   code: [
     {required: true, message: '请输入验证码', trigger: 'blur'},
@@ -192,7 +189,7 @@ const rules = {
         </el-form-item>
 
         <el-form-item prop="email">
-          <el-input v-model="form.email"  type="email" placeholder="电子邮箱">
+          <el-input v-model="form.email" type="email" placeholder="电子邮箱">
             <template #prefix>
               <el-icon>
                 <Message/>
@@ -213,9 +210,9 @@ const rules = {
               </el-input>
             </el-col>
             <el-col :span="6">
-              <el-button  @click="validateEmail" type="success" style="width: 100%;" :disabled="
+              <el-button @click="validateEmail" type="success" style="width: 100%;" :disabled="
               !isEmailValid || isSendEmail || coldTime > 0">
-                {{coldTime > 0 ? coldTime+"s": '发送验证码'}}
+                {{ coldTime > 0 ? coldTime + "s" : '发送验证码' }}
               </el-button>
             </el-col>
           </el-row>

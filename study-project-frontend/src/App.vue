@@ -4,20 +4,20 @@
   </div>
 </template>
 
-<script setup >
+<script setup>
 import {get} from "@/net"
 import {ElMessage} from "element-plus"
-import  {useStore} from "@/stores/index.js";
+import {useStore} from "@/stores/index.js";
 import router from "@/router/index.js";
 
 const store = useStore()
 
 
-if (store.auth.user == null){
-  get('api/user/me',(message) =>{
+if (store.auth.user == null) {
+  get('api/user/me', (message) => {
     store.auth.user = message;
     router.push('/index')
-  },()=>{
+  }, () => {
     store.auth.user = null;
   })
 }

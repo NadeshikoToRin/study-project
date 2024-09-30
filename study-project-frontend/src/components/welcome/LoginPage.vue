@@ -26,10 +26,10 @@ const login = () => {
         remember: form.remember
       }, (message) => {
         ElMessage.success(message)
-        get('api/user/me',(message) =>{
+        get('api/user/me', (message) => {
           store.auth.user = message;
           router.push('/index')
-        },()=>{
+        }, () => {
           store.auth.user = null;
         })
       })
@@ -51,7 +51,6 @@ const validatePassword = (rule, value, callback) => {
 }
 
 
-
 const rules = {
   username: [
     // {validator: validateUsername, trigger: ['blur', 'change']},
@@ -59,8 +58,8 @@ const rules = {
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
-    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur','change']},
-    {validator:validatePassword,trigger: ['blur', 'change']}
+    {min: 6, max: 16, message: '长度在 6 到 16 个字符之间', trigger: ['blur', 'change']},
+    {validator: validatePassword, trigger: ['blur', 'change']}
   ]
 }
 

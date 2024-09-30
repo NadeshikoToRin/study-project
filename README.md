@@ -1,22 +1,21 @@
+---
+
 # 基于 Spring Boot 3 + Vue 3 的前后端分离项目
 
 ## 项目简介
 
-这是一个基于 JDK 17、Spring Boot 3、Spring Security 6、JWT、Redis、Mybatis、Vue 3、Element-Plus 构建的前后端分离项目，支持二次开发，旨在提供一个简洁易用的开发框架，快速搭建功能丰富的Web应用。项目主要实现了用户管理、权限控制和高鲁棒性的登录注册功能，适合用作学习和扩展。
+这是一个基于 JDK 17、Spring Boot 3、Spring Security 6、JWT、Redis、Mybatis、Vue 3、Element-Plus 构建的前后端分离项目。项目主要实现了用户管理、权限控制、邮箱验证、验证码验证、用户注册、密码重置等功能，旨在提供一个简洁易用且具有良好可扩展性的开发框架，支持快速搭建功能丰富的 Web 应用。
 
 ## 项目仓库
 
 [GitHub 仓库](https://github.com/NadeshikoToRin/study-project)
 
-## 框架简介
+## 技术栈
 
-- **Spring Boot + MyBatis**: 
-  Spring Boot 简化了 Spring 应用的开发流程，MyBatis 提供了直观的 CRUD 操作支持。  
-  [了解更多](https://spring.io/projects/spring-boot)
-
-- **Redis**: 
-  Redis 是一个基于内存的键值存储数据库，适用于高效的缓存和数据存取需求。  
-  [Redis 官网](https://redis.io/)
+- **后端**：Spring Boot 3、Spring Security 6、MyBatis、Redis、JWT、BCrypt 密码加密
+- **前端**：Vue 3、Element-Plus、Pinia 状态管理、Vue Router
+- **数据库**：MySQL、Redis
+- **依赖管理**：Maven
 
 ## 后端项目结构
 
@@ -45,6 +44,13 @@
 └─ └─ └─resources                    // 资源文件
 ```
 
+### 主要功能模块
+
+- **AuthorizeController**：处理用户登录、注册、邮箱验证、密码重置等请求。
+- **AuthorizeServiceImpl**：实现验证码的发送、校验及用户的注册、密码重置等业务逻辑。通过 Redis 存储验证码、BCrypt 加密用户密码。
+- **UserMapper**：提供与数据库的交互接口，处理用户信息的查询、更新、删除等操作。
+- **SecurityConfiguration**：使用 Spring Security 进行安全配置，支持 JWT 认证及权限控制。
+
 ## 前端项目结构
 
 ```
@@ -64,9 +70,17 @@
     └─utils                        // 工具类函数
 ```
 
+### 主要功能模块
+
+- **LoginPage.vue**：处理用户登录页面。
+- **RegisterPage.vue**：处理用户注册页面，集成邮箱验证功能。
+- **ForgetPage.vue**：处理用户忘记密码页面，支持验证码验证及密码重置。
+- **Vue Router**：路由管理，包含路由守卫，确保未登录用户无法访问受保护页面。
+- **Pinia**：状态管理，管理用户登录信息和其他全局状态。
+
 ## 功能介绍
 
-本项目提供基本的用户管理功能，包括但不限于：
+本项目提供的主要功能包括用户管理、权限控制和安全验证，具体如下：
 
 ### 1. 登录功能
 
@@ -83,14 +97,21 @@
   - 前端向后端发送 POST 请求，后端通过正则表达式和数据库查重逻辑验证用户名和邮箱的唯一性。
   - 如果验证通过，后端会将用户信息保存到数据库，并向用户的邮箱发送验证邮件。
 
-### 3. 重置密码
+### 3. 邮箱验证与验证码
 
 - **实现原理**:
-  - 用户请求重置密码时，后端会生成并发送一个唯一的验证码到用户注册的邮箱。
+  - 在用户注册或找回密码时，系统生成一个 6 位随机验证码，通过 Redis 存储，并通过邮件发送到用户邮箱。
+  - Redis 中的验证码有效期为 3 分钟，用户需在有效期内输入验证码。
+  - 后端校验用户输入的验证码是否正确，验证通过后允许注册或重置密码。
+
+### 4. 重置密码
+
+- **实现原理**:
+  - 用户请求重置密码时，后端生成并发送一个唯一的验证码到用户注册的邮箱。
   - 用户输入新密码和验证码后，后端验证验证码的有效性，并更新数据库中的用户密码。
   - 密码存储时同样使用 BCryptPasswordEncoder 进行加密，确保安全性。
 
-### 4. 记住登录状态功能
+### 5. 记住登录状态功能
 
 - **实现原理**:
   - 使用 `persistent_logins` 表存储用户的登录状态信息。
@@ -101,12 +122,12 @@
 
 ### `db_account` 表
 
-| 列名       | 数据类型     | 描述                              |
-| ---------- | ------------ | --------------------------------- |
-| `id`       | INT(20)      | 用户ID，主键                      |
-| `username` | VARCHAR(255) | 用户名，UNIQUE                    |
-| `password` | VARCHAR(255) | 加密后的密码                      |
-| `email`    | VARCHAR(255) | 邮箱，UNIQUE                      |
+| 列名       | 数据类型     | 描述           |
+| ---------- | ------------ | -------------- |
+| `id`       | INT(20)      | 用户ID，主键   |
+| `username` | VARCHAR(255) | 用户名，UNIQUE |
+| `password` | VARCHAR(255) | 加密后的密码   |
+| `email`    | VARCHAR(255) | 邮箱，UNIQUE   |
 
 ### `persistent_logins` 表
 
@@ -119,34 +140,25 @@
 
 ## 开发规范
 
-详细的开发规范请参见以下链接：
+- **前端开发规范**: 请参见[前端开发规范](https://developer.aliyun.com/article/850913#:~:text=1.5.1%20命名.)
+- **后端开发规范**: 请参见[后端开发规范](https://developer.aliyun.com/article/1327183)
+- **API 命名规范**: 请参见[API 命名规范](https://developer.aliyun.com/article/1352795#:~:text=OpenAPI%20规范)
 
-- [前端开发规范](https://developer.aliyun.com/article/850913#:~:text=1.5.1%20命名.)
-- [后端开发规范](https://developer.aliyun.com/article/1327183)
-- [API 命名规范](https://developer.aliyun.com/article/1352795#:~:text=OpenAPI%20规范)
+## 项目展示
 
----
-
-## 效果图：
-
-#### 登录页面：
+### 登录页面：
 
 ![登录页面](preview-image/login.png)
 
+### 注册页面：
 
+![注册页面](preview-image/register.png)
 
-#### 注册页面：
+### 忘记密码：
 
-#### ![注册页面（用户名和密码不能与数据库中内容重复）](preview-image/register.png)
+![忘记密码第一步](preview-image/forget_step1.png)
 
+![忘记密码第二步](preview-image/forget_step2.png)
 
+---
 
-#### 忘记密码：
-
-#### ![忘记密码第一步](preview-image/forget_step1.png)
-
-
-
-#### 忘记密码：
-
-#### ![忘记密码第二步](preview-image/forget_step2.png)

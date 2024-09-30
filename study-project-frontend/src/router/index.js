@@ -1,4 +1,4 @@
-import {createRouter,createWebHistory} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 
 import Welcome from "@/views/Welcome.vue";
 import LoginPage from "@/components/welcome/LoginPage.vue";
@@ -9,12 +9,12 @@ import {useStore} from "@/stores/index.js";
 
 const router = createRouter({
     history: createWebHistory(),
-    routes:[
+    routes: [
         {
             path: '/',
             name: 'welcome',
             component: Welcome,
-            children:[
+            children: [
                 {
                     path: '',
                     name: 'welcome-login',
@@ -33,9 +33,9 @@ const router = createRouter({
             ]
         },
         {
-            path:'/index',
-            name:'index',
-            component:IndexVue
+            path: '/index',
+            name: 'index',
+            component: IndexVue
         }
     ]
 })
@@ -43,13 +43,13 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const store = useStore()
     // 登录状态
-    if(store.auth.user !=null && to.name.startsWith('welcome-')){// 已登录
+    if (store.auth.user != null && to.name.startsWith('welcome-')) {// 已登录
         next('/index')
-    }else if (store.auth.user == null && to.fullPath.startsWith('/index')){// 未登录
+    } else if (store.auth.user == null && to.fullPath.startsWith('/index')) {// 未登录
         next('/')
-    }else if (to.matched.length === 0) {// 未匹配到路由
+    } else if (to.matched.length === 0) {// 未匹配到路由
         next('/index')
-    }else {
+    } else {
         next()// 放行
     }
 })
