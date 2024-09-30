@@ -100,8 +100,8 @@
 
   项目使用 Pinia 进行状态管理，提供全局的用户认证状态管理：
 
-  ```
-  javascript复制代码import { ref, computed, reactive } from 'vue';
+  ```javascript
+  import { ref, computed, reactive } from 'vue';
   import { defineStore } from 'pinia';
   
   export const useStore = defineStore('store', () => {
