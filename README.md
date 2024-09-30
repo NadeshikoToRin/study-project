@@ -78,6 +78,51 @@
 - **Vue Router**：路由管理，包含路由守卫，确保未登录用户无法访问受保护页面。
 - **Pinia**：状态管理，管理用户登录信息和其他全局状态。
 
+### 路由功能说明
+
+- **欢迎页面** (`/`)：
+
+  - 默认显示登录页面。
+  - 包含子路由：注册页面(`/register`)、忘记密码页面(`/forget`)。
+
+- **用户主页** (`/index`)：
+
+  - 登录成功后重定向至该页面。
+
+- **路由守卫**：
+
+  - 如果用户已登录，访问欢迎页面将自动重定向至用户主页。
+  - 如果用户未登录，访问用户主页将重定向至登录页面。
+
+  
+
+  ### 状态管理
+
+  项目使用 Pinia 进行状态管理，提供全局的用户认证状态管理：
+
+  ```
+  javascript复制代码import { ref, computed, reactive } from 'vue';
+  import { defineStore } from 'pinia';
+  
+  export const useStore = defineStore('store', () => {
+      const auth = reactive({
+          user: null
+      });
+  
+      return { auth };
+  });
+  ```
+
+  ### 状态管理功能说明
+
+  - auth
+
+    ：用于存储用户的登录状态信息。
+
+    - `user`: 记录当前登录用户的信息，默认为 `null`。
+
+  
+
 ## 功能介绍
 
 本项目提供的主要功能包括用户管理、权限控制和安全验证，具体如下：
@@ -162,3 +207,37 @@
 
 ---
 
+## 安装与运行
+
+1. 克隆项目：
+
+   ```bash
+   git clone https://github.com/NadeshikoToRin/study-project.git
+   ```
+
+2. 进入项目目录：
+
+   ```bash
+   cd study-project
+   ```
+
+3. 启动后端服务：
+
+   ```bash
+   cd study-project-backend
+   mvn spring-boot:run
+   ```
+
+4. 启动前端项目：
+
+   ```bash
+   cd study-project-frontend
+   npm install
+   npm run serve
+   ```
+
+5. 打开浏览器访问 `http://localhost:8080`（前端服务）或 `http://localhost:8081`（后端服务）。
+
+## 结语
+
+欢迎贡献和反馈！如果您在使用本项目时遇到问题或有建议，请在 GitHub 提交 Issue。
