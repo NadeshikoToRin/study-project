@@ -138,7 +138,7 @@
 
 #### 登录页面：
 
-![登录页面](preview-image\login.png)
+![登录页面](preview-image/login.png)
 
 
 
@@ -156,4 +156,4 @@
 
 #### 忘记密码：
 
-#### ![忘记密码第一步](F:/findJob_2024/study-project/preview-image/forget_step2.png)
+#### ![忘记密码第二步](preview-image/forget_step2.png)
