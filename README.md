@@ -233,10 +233,10 @@
    ```bash
    cd study-project-frontend
    npm install
-   npm run serve
+   npm run dev
    ```
 
-5. 打开浏览器访问 `http://localhost:8080`（前端服务）或 `http://localhost:8081`（后端服务）。
+5. 打开浏览器访问 `http://localhost:5173`（前端服务）或 `http://localhost:8080`（后端服务）。
 
 ## 结语
 
