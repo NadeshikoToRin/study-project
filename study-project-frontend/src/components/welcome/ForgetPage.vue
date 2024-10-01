@@ -154,7 +154,7 @@ const validatePassword2 = (rule, value, callback) => {
 
 const validateEmail = () => {
   coldTime.value = 60;
-  post("api/auth/valid-reset-email", {
+  post("/api/auth/valid-reset-email", {
     email: form.email,
   }, (message) => {
     ElMessage.success(message)

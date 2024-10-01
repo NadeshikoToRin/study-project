@@ -74,7 +74,7 @@ const register = () => {
 
 const validateEmail = () => {
   coldTime.value = 60;
-  post("api/auth/valid-register-email", {
+  post("/api/auth/valid-register-email", {
     email: form.email,
   }, (message) => {
     ElMessage.success(message)
@@ -94,7 +94,7 @@ const verifySaved = (rule, value, callback) => {
   if (!value) {
     return callback(new Error('请填写用户名或邮箱'));
   }
-  axios.post('api/auth/verify-saved', {text: value})
+  axios.post('/api/auth/verify-saved', {text: value})
       .then(response => {
         if (response.data.status === 200) {
           callback(); // 用户名或邮箱可用

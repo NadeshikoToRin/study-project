@@ -14,11 +14,13 @@ const store = useStore()
 
 
 if (store.auth.user == null) {
-  get('api/user/me', (message) => {
+  get('/api/user/me', (message) => {
     store.auth.user = message;
     router.push('/index')
   }, () => {
     store.auth.user = null;
+    ElMessage.warning('未登录，请先登录')
+    // router.push('/')
   })
 }
 

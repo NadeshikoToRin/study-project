@@ -26,7 +26,7 @@ const login = () => {
         remember: form.remember
       }, (message) => {
         ElMessage.success(message)
-        get('api/user/me', (message) => {
+        get('/api/user/me', (message) => {
           store.auth.user = message;
           router.push('/index')
         }, () => {

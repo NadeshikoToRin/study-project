@@ -79,7 +79,7 @@ public class SecurityConfiguration {
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> { // 处理认证失败的请求
                             response.setCharacterEncoding("utf-8"); // 设置字符编码为UTF-8
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 返回HTTP 401未授权状态
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 返回HTTP 401未授权状态
                             response.getWriter().write(JSONObject.toJSONString(RestBean.failure(401, authException.getMessage()))); // 返回JSON格式的错误信息
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> { // 处理访问被拒绝的请求
