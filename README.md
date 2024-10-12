@@ -26,14 +26,19 @@
 │  │  │          └─studyprojectbackend    
 │  │  │              ├─common      // 通用功能模块
 │  │  │              ├─config      // 配置类模块
-│  │  │              │  └─SecurityConfiguration // 安全配置类
+│  │  │              │  ├─SecurityConfiguration // 安全配置类
+│  │  │              │  └─WebConfiguration // 拦截器规则配置类，注册拦截器到拦截器链
+│  │  │              ├─interceptor      // 拦截器
+│  │  │              │  └─AuthorizeInterceptor // 将认证用户信息AccountUser存储到session中
 │  │  │              ├─controller  // 控制层
-│  │  │              │  └─AuthorizeController // 处理 API 相关请求
+│  │  │              │  ├─AuthorizeController // 处理 API 相关请求
+│  │  │              │  └─UserController // 处理 API 相关请求
 │  │  │              ├─mapper      // 数据访问层
 │  │  │              │  └─UserMapper // 与用户信息表交互
 │  │  │              ├─entity      // 实体类
 │  │  │              │  ├─Account           // 用户实体类
-│  │  │              │  ├─RestBean          // 前后端交互对象
+│  │  │              │  ├─AccountUser       // 认证对象用户实体类
+│  │  │              │  └─RestBean          // 前后端交互对象
 │  │  │              ├─service     // 服务层接口
 │  │  │              │  └─impl      // 服务实现类
 │  │  │              │	  └─AuthorizeServiceImpl // 处理验证逻辑
@@ -233,6 +238,16 @@
    ```
 
 5. 打开浏览器访问 `http://localhost:5173`（前端服务）或 `http://localhost:8080`（后端服务）。
+
+## API 说明
+
+| HTTP 方法 | API 路径              | 描述           |
+| --------- | --------------------- | -------------- |
+| POST      | `/api/login`          | 用户登录       |
+| POST      | `/api/register`       | 用户注册       |
+| GET       | `/api/email/validate` | 邮箱验证码验证 |
+| POST      | `/api/password/reset` | 密码重置       |
+| GET       | `/api/user/me`        | 获取用户资料   |
 
 ## 结语
 
