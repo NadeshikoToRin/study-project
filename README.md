@@ -186,6 +186,20 @@
 | `token`     | not null | VARCHAR(64) |
 | `last_used` | not null | TIMESTAMP   |
 
+## API 说明
+
+| HTTP 方法 | API 路径                         | 描述                                     |
+| --------- | -------------------------------- | ---------------------------------------- |
+| POST      | `/api/auth/login`                | 用户登录                                 |
+| GET       | `/api/auth/logout`               | 用户登出                                 |
+| POST      | `/api/auth/valid-register-email` | 发送注册邮箱验证码                       |
+| POST      | `/api/auth/valid-reset-email`    | 密码重置验证码                           |
+| GET       | `/api/user/me`                   | 获取用户资料                             |
+| POST      | `/api/auth/verify-saved`         | 注册用户时验证用户名或密码是否存在       |
+| POST      | `/api/auth/register`             | 用户注册                                 |
+| POST      | `/api/auth/start-rest`           | 重置密码第一步：验证邮箱和验证码         |
+| POST      | `/api/auth/do-reset`             | 重置密码第二步：将修改后的密码存入数据库 |
+
 ## 开发规范
 
 - **前端开发规范**: 请参见[前端开发规范](https://developer.aliyun.com/article/850913#:~:text=1.5.1%20命名.)
@@ -238,20 +252,6 @@
    ```
 
 5. 打开浏览器访问 `http://localhost:5173`（前端服务）或 `http://localhost:8080`（后端服务）。
-
-## API 说明
-
-| HTTP 方法 | API 路径                         | 描述                                     |
-| --------- | -------------------------------- | ---------------------------------------- |
-| POST      | `/api/auth/login`                | 用户登录                                 |
-| GET       | `/api/auth/logout`               | 用户登出                                 |
-| POST      | `/api/auth/valid-register-email` | 发送注册邮箱验证码                       |
-| POST      | `/api/auth/valid-reset-email`    | 密码重置验证码                           |
-| GET       | `/api/user/me`                   | 获取用户资料                             |
-| POST      | `/api/auth/verify-saved`         | 注册用户时验证用户名或密码是否存在       |
-| POST      | `/api/auth/register`             | 用户注册                                 |
-| POST      | `/api/auth/start-rest`           | 重置密码第一步：验证邮箱和验证码         |
-| POST      | `/api/auth/do-reset`             | 重置密码第二步：将修改后的密码存入数据库 |
 
 ## 结语
 
