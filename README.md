@@ -1,4 +1,4 @@
-# 基于 Spring Boot 3 + Vue 3 的前后端分离项目
+# ScaleStack-企业级全栈开发框架
 
 ## 项目简介
 
